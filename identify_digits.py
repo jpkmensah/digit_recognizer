@@ -15,20 +15,24 @@ from sklearn import svm, metrics
 import os
 
 def main():
-    a = numpy.loadtxt('train.csv', delimiter=',', skiprows=1)
+    predict_on_test('train.csv','test.csv','pred.csv')
+    pass
+
+def predict_on_test(training_filename, test_filename, pred_filename):
+    train_set = numpy.loadtxt(training_filename, delimiter=',', skiprows=1)
     # first column represents the label for the values
-    labels = a[:,0]
+    labels = train_set[:,0]
     n_examples = len(labels)
-    values = scipy.delete(a,0,1)
+    values = scipy.delete(train_set,0,1)
 
     classifier = svm.SVC(C=1, gamma=0.001, degree=2, kernel='poly')
     classifier.fit(values, labels)
 
-    test_values = numpy.loadtxt('test.csv', delimiter=',', skiprows=1)
+    test_values = numpy.loadtxt(test_filename, delimiter=',', skiprows=1)
 
     predicted = classifier.predict(test_values)
 
-    predictions_file = open('predictions.csv', 'w')
+    predictions_file = open(pred_filename, 'w')
     img_id = 1
     predictions_file.write('ImageId,Label\n')
     for guess in predicted:
@@ -36,7 +40,7 @@ def main():
         predictions_file.write(output_line)
         img_id += 1
     predictions_file.close()
-    pass
+
 
 def split_train_cv(training_filename):
     # Split the training set into training and cross validation sets.
